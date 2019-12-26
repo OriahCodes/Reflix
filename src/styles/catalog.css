@@ -1,0 +1,31 @@
+.movies-container{
+    padding-top: 15px
+}
+
+#rented-container{
+    padding-top: 30px
+}
+
+#budget-message{
+    position:absolute;
+    right: 50px;
+    padding: 7px;
+    background-color: rgb(37, 36, 36);
+    z-index: 1;
+    top: 140px;
+}
+
+.movies-box{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-gap: 10px;
+    padding: 20px;
+}
+
+.box-label{
+    display: inline-block;
+    color: #fff;
+    margin-left: 20px;
+}
+
+

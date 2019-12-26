@@ -1,0 +1,23 @@
+#profiles-container{
+    position: fixed;
+    background-color: #141414;
+    height: 15em;
+    width: 80%;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: -1;
+}
+
+.profiles-label{
+    width: 100%;
+    color: #fff;
+    font-size: 30px;
+    padding-bottom: 10px;
+}
+
+.choose-profile{
+    padding:0
+}
+
