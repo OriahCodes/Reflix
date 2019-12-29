@@ -5,20 +5,17 @@ import '../styles/movie.css'
 class Movie extends Component {
 
     handleRent = async (event) => {
+        event.preventDefault();
         let legitRental = await this.props.handleBudget(this.props.movieInfo.isRented)
         if (legitRental) { this.props.handleRent(this.props.movieInfo)}
-        
-        event.stopPropagation()
-        console.log(event.cancelable)
-
-        // event.preventDefault()
     }
 
     render() {
         let movie = this.props.movieInfo
         let boxType = this.props.boxType
+
         return (
-            // <Link to={`/movie/${movie.id}`}>
+            <a href={`/movie/${movie.id}`}> 
                 <div className="movie" style={{backgroundImage:`url(${movie.img})`}}>
                     {boxType === "catalog" ?
                         movie.isRented ? 
@@ -27,7 +24,7 @@ class Movie extends Component {
                         : <></>
                     }
                 </div>
-            // </Link>
+            </a>
         )
     }
 }

@@ -16,7 +16,7 @@ class App extends Component{
             { id: 3, isRented: false, title: "The Sword in the Stone", year: 1963, img: "https://is5-ssl.mzstatic.com/image/thumb/Video2/v4/02/1a/11/021a11a6-3e5f-af39-6414-a3f538e8513a/pr_source.lsr/268x0w.png", descrShort: "Arthur is a young boy who just wants to be a knight's squire. Alas, he is dubbed 'Wart' early on, and it was all downhill from there for a while. On a hunting trip he falls in on Merlin, literally. Merlin is a possibly-mentally-unstable-and-ethically-dubious Wizard that turns Arthur into a literate, at-one-point harassed squirrel. Watch to find out what the heck that means." },
             { id: 4, isRented: false, title: "Beauty and the Beast", year: 2016, img: "https://images-na.ssl-images-amazon.com/images/I/51ArFYSFGJL.jpg", descrShort: "Basically the same as the original, except now Hermi-- Emma Wattson plays Belle, fittingly so some would say, given how actively progressive she is regarding women's rights. Rumor has it that in the bonus scenes she whips out a wand and turns Gaston into a toad, but in order to watch those scenes you need to recite a certain incantation." }
         ],
-        rentedMovies : [],
+        userName: undefined
     }
   }
 
@@ -26,15 +26,66 @@ class App extends Component{
 
     let movies = this.state.movies
     movies[movieInfo.id].isRented = isRented
-    this.setState({movies})
-
-    let rentedMovies = this.state.rentedMovies
-    !isRented ? 
-        rentedMovies = rentedMovies.filter(r => r.id !== movieInfo.id) : 
-        rentedMovies.push(movieInfo)
-    this.setState({rentedMovies})
+    this.setState({movies}, () => {
+      this.saveUserInfo()
+    })
   }
 
+  handleNewUser = (userName) => {
+    this.setState({userName}, () => {
+      localStorage.currentUserName = userName
+      console.log("Current user: " + userName)
+
+      this.updateWithSavedUserInfo()
+    })
+  }
+
+  restartMoviesInfo = () => {
+    let movies = this.state.movies
+    for (let m in movies){
+      movies[m].isRented= false
+    }
+    this.setState({movies})
+  }
+
+  saveUserInfo = async () => {
+    let rentedMovies = []
+    let movies = this.state.movies
+    await movies.forEach(m => { 
+        if (m.isRented){
+            rentedMovies.push(m)
+        } 
+    })
+
+    let UsersRentedMovies = { 
+      rentedMovies: rentedMovies
+    }
+    localStorage[this.state.userName] =JSON.stringify(UsersRentedMovies)
+  }
+
+  updateWithSavedUserInfo = () => {
+    this.restartMoviesInfo()
+    let movies = this.state.movies
+    let user = JSON.parse(localStorage[this.state.userName] || null)
+    if (user){
+      for (let movie of user.rentedMovies){
+        movies[movie.id].isRented = true
+      }
+    }
+
+    this.setState({movies})
+  }
+
+  componentDidMount = () => {
+    let userName = localStorage.currentUserName
+    this.setState({userName}, () => {
+      console.log("Current user: " + userName)
+        
+      if (userName !== undefined) {
+        this.updateWithSavedUserInfo()
+      }
+    })
+  }
 
   render(){
     let movies = this.state.movies
@@ -52,16 +103,20 @@ class App extends Component{
 
         <div id="app-background"></div>
 
-        <Route exact path="/" component={Landing}/>
+        <Route exact path="/" render={ () =>
+          <Landing 
+            handleNewUser={this.handleNewUser}/> } />
 
         <Route exact path="/Catalog" render={ () =>
           <Catalog 
             movies={movies} 
-            rentedMovies={this.state.rentedMovies} 
-            handleRent={this.handleRent}/>} />
+            userName={this.state.userName}
+            budget={this.state.budget}
+            handleRent={this.handleRent}
+            key="catalog" />} />
 
         <Route exact path="/movie/:id" render={ ({match}) => 
-          <MovieDetails match={match} movies={movies}/>} />
+          <MovieDetails match={match} movies={movies} key="catalog"/>} />
 
       </Router>
 

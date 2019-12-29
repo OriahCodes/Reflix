@@ -4,9 +4,8 @@ import '../styles/user.css'
 
 class User extends Component {
 
-    handleUser = () => {
-        console.log(this.props.user.name)
-        localStorage[this.props.user.name]=[]
+    handleNewUser = () => {
+        this.props.handleNewUser(this.props.user.name)
     }
 
     render() {
@@ -14,7 +13,7 @@ class User extends Component {
         let img = this.props.user.img
         return (
             <li className="profile">
-                <Link className="profile-link" to="/Catalog" onClick={this.handleUser}>
+                <Link className="profile-link" to="/Catalog" onClick={this.handleNewUser}>
                     <div className="profile-icon" style={{backgroundImage: `url(${img})` }}> 
                     </div>
                     <span className="profile-name">{name}</span>

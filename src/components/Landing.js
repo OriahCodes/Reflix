@@ -18,7 +18,7 @@ class Landing extends Component {
             <div id="profiles-container">
                 <div className="profiles-label">Who's watching?</div>
                 <ul className="choose-profile"> 
-                    {users.map(u => <User user={u} key={u.name}/>)}
+                    {users.map(u => <User user={u} key={u.name} handleNewUser={this.props.handleNewUser}/>)}
                 </ul>
             </div>
         )
