@@ -16,6 +16,7 @@ class App extends Component{
             { id: 3, isRented: false, title: "The Sword in the Stone", year: 1963, img: "https://is5-ssl.mzstatic.com/image/thumb/Video2/v4/02/1a/11/021a11a6-3e5f-af39-6414-a3f538e8513a/pr_source.lsr/268x0w.png", descrShort: "Arthur is a young boy who just wants to be a knight's squire. Alas, he is dubbed 'Wart' early on, and it was all downhill from there for a while. On a hunting trip he falls in on Merlin, literally. Merlin is a possibly-mentally-unstable-and-ethically-dubious Wizard that turns Arthur into a literate, at-one-point harassed squirrel. Watch to find out what the heck that means." },
             { id: 4, isRented: false, title: "Beauty and the Beast", year: 2016, img: "https://images-na.ssl-images-amazon.com/images/I/51ArFYSFGJL.jpg", descrShort: "Basically the same as the original, except now Hermi-- Emma Wattson plays Belle, fittingly so some would say, given how actively progressive she is regarding women's rights. Rumor has it that in the bonus scenes she whips out a wand and turns Gaston into a toad, but in order to watch those scenes you need to recite a certain incantation." }
         ],
+        budget: undefined,
         userName: undefined
     }
   }
@@ -31,12 +32,25 @@ class App extends Component{
     })
   }
 
-  handleNewUser = (userName) => {
+  handleBudget = (rentalStatus) => {
+    let isRented = !rentalStatus
+    
+    if (!isRented) {
+        this.setState({budget: this.state.budget +3})
+    }
+    else {
+      if (this.state.budget - 3 < 0) { return false} 
+      else { this.setState({budget: this.state.budget -3}) }
+    }
+    return true
+  }
+
+  handleRegisteredUser = (userName) => {
     this.setState({userName}, () => {
       localStorage.currentUserName = userName
       console.log("Current user: " + userName)
 
-      this.updateWithSavedUserInfo()
+      this.renderSavedUserInfo()
     })
   }
 
@@ -57,23 +71,58 @@ class App extends Component{
         } 
     })
 
-    let UsersRentedMovies = { 
-      rentedMovies: rentedMovies
+    let UserInfo = { 
+      rentedMovies: rentedMovies,
+      budget : this.state.budget
     }
-    localStorage[this.state.userName] =JSON.stringify(UsersRentedMovies)
+
+    localStorage[this.state.userName] =JSON.stringify(UserInfo)
   }
 
-  updateWithSavedUserInfo = () => {
-    this.restartMoviesInfo()
+  handleOldUsersData = (user) => {
     let movies = this.state.movies
-    let user = JSON.parse(localStorage[this.state.userName] || null)
-    if (user){
-      for (let movie of user.rentedMovies){
-        movies[movie.id].isRented = true
-      }
-    }
+    let budget = user.budget
 
-    this.setState({movies})
+    for (let movie of user.rentedMovies){
+        movies[movie.id].isRented = true
+    }
+    
+    this.setState({
+      movies: movies,
+      budget: budget
+    })
+  }
+
+  handleNewUsersData = () => {
+    let movies = this.state.movies
+    let budget = 10
+    let userInfo= {
+      rentedMovies : [],
+      budget : budget
+    }
+    localStorage[this.state.userName] =JSON.stringify(userInfo)
+
+    this.setState({
+      movies: movies,
+      budget: budget
+    })
+  }
+
+  renderSavedUserInfo = () => {
+    this.restartMoviesInfo()
+
+    let user = JSON.parse(localStorage[this.state.userName] || null)
+    if (user && user.rentedMovies.length > 0){ //for old user
+      this.handleOldUsersData(user)
+    }
+    else if (localStorage.currentUserName !== ("unedfined" || undefined)){ //for new user
+      this.handleNewUsersData()
+      
+    }
+    else { //for an unregistered user
+      console.log("user doesn't exist")
+    }
+    
   }
 
   componentDidMount = () => {
@@ -82,7 +131,7 @@ class App extends Component{
       console.log("Current user: " + userName)
         
       if (userName !== undefined) {
-        this.updateWithSavedUserInfo()
+        this.renderSavedUserInfo()
       }
     })
   }
@@ -105,13 +154,15 @@ class App extends Component{
 
         <Route exact path="/" render={ () =>
           <Landing 
-            handleNewUser={this.handleNewUser}/> } />
+            handleRegisteredUser={this.handleRegisteredUser}
+            signOut={this.signOut}/> } />
 
         <Route exact path="/Catalog" render={ () =>
           <Catalog 
             movies={movies} 
             userName={this.state.userName}
             budget={this.state.budget}
+            handleBudget={this.handleBudget}
             handleRent={this.handleRent}
             key="catalog" />} />
 

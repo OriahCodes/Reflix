@@ -6,8 +6,14 @@ class Movie extends Component {
 
     handleRent = async (event) => {
         event.preventDefault();
-        let legitRental = await this.props.handleBudget(this.props.movieInfo.isRented)
-        if (legitRental) { this.props.handleRent(this.props.movieInfo)}
+        let checkUserExistance = this.props.userName
+        if (checkUserExistance !== undefined){
+            let legitRental = await this.props.handleBudget(this.props.movieInfo.isRented)
+            if (legitRental) { this.props.handleRent(this.props.movieInfo)}
+            else{ this.props.showBudgetMessage() }
+        }
+        else{ this.props.showNoRentalMessage() }
+
     }
 
     render() {

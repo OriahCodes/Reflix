@@ -9,8 +9,8 @@ class Catalog extends Component {
         super()
         this.state={
             searchFilter : [],
-            budget : 0,
             showBudgetMessage : false,
+            showNoRentalMessage :false
         }
     }
 
@@ -28,29 +28,16 @@ class Catalog extends Component {
         },2000)
     }
 
-    handleBudget = (rentalStatus) => {
-        let isRented = !rentalStatus
-        if (!isRented) {
-            this.setState({budget: this.state.budget +3})
-        }
-
-        else {
-            if (this.state.budget - 3 < 0) {
-                this.showBudgetMessage()
-                return false
-            } 
-            else { this.setState({budget: this.state.budget -3}) }
-        }
-        
-        return true
+    showNoRentalMessage = () => {
+        this.setState({showNoRentalMessage : true})
+        setTimeout( () => {
+            this.setState({showNoRentalMessage : false})
+        },3000)
     }
 
     componentDidMount = async () => {
-        // let movies = this.props.movies 
-
         this.setState({
             searchFilter : this.props.movies,
-            budget : 10,
         })
     }
 
@@ -68,8 +55,10 @@ class Catalog extends Component {
             <div id="catalog-page">
                 <SearchBar handleSearch={this.handleSearch}/>
                 
+                {this.state.showNoRentalMessage ? <div id="no-rental-message"> The rentl feature is availabele for registered users only </div> : null}
+
                 {rentedMovies.length !== 0 ?
-                    <Budget budget={this.state.budget} key={this.props.userName}/> : <></>}
+                    <Budget budget={this.props.budget} key={this.props.userName}/> : <></>}
 
                 {rentedMovies.length !== 0 ?
                     <div className="movies-container" id="rented-container">
@@ -93,9 +82,12 @@ class Catalog extends Component {
                         {movies.map(m => 
                             <Movie 
                                 movieInfo={m} 
+                                userName ={this.props.userName}
                                 handleRent={this.props.handleRent} 
                                 boxType="catalog" 
-                                handleBudget={this.handleBudget}
+                                handleBudget={this.props.handleBudget}
+                                showBudgetMessage={this.showBudgetMessage}
+                                showNoRentalMessage={this.showNoRentalMessage}
                                 key={m.id}/>)}
                     </div>
                 </div>

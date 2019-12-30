@@ -4,8 +4,8 @@ import '../styles/user.css'
 
 class User extends Component {
 
-    handleNewUser = () => {
-        this.props.handleNewUser(this.props.user.name)
+    handleRegisteredUser = () => {
+        this.props.handleRegisteredUser(this.props.user.name)
     }
 
     render() {
@@ -13,7 +13,7 @@ class User extends Component {
         let img = this.props.user.img
         return (
             <li className="profile">
-                <Link className="profile-link" to="/Catalog" onClick={this.handleNewUser}>
+                <Link className="profile-link" to="/Catalog" onClick={this.handleRegisteredUser}>
                     <div className="profile-icon" style={{backgroundImage: `url(${img})` }}> 
                     </div>
                     <span className="profile-name">{name}</span>

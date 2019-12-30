@@ -12,15 +12,21 @@ class Landing extends Component {
             ]
         }
     }
+
+    signOut = () => {
+        this.props.handleRegisteredUser(undefined)
+    }
+
     render() {
         let users = this.state.users
         return (
             <div id="profiles-container">
                 <div className="profiles-label">Who's watching?</div>
                 <ul className="choose-profile"> 
-                    {users.map(u => <User user={u} key={u.name} handleNewUser={this.props.handleNewUser}/>)}
+                    {users.map(u => <User user={u} key={u.name} handleRegisteredUser={this.props.handleRegisteredUser}/>)}
                 </ul>
-            </div>
+                <div id="sign-out" onClick={this.signOut}>Sign out</div>
+            </div>                
         )
     }
 }
