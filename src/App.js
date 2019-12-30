@@ -9,6 +9,10 @@ class App extends Component{
   constructor(){
     super()
     this.state={
+        users : [
+          {name: "Josef", img: "https://occ-0-2616-2774.1.nflxso.net/art/bd699/2f5075ef2c57898f34ca627377b4ccfc615bd699.png", budget : 42},
+          {name: "Keren", img: "https://occ-0-2616-2774.1.nflxso.net/art/6ecfa/2799a7f10e6481ef52df1800d3ddfc1176d6ecfa.png",budget : 10}
+        ],
         movies : [
             { id: 0, isRented: false, title: "Tarzan", year: 1999, img: "https://vignette.wikia.nocookie.net/disney-fan-fiction/images/4/42/Tarzan_2004_cover.jpg/revision/latest?cb=20140331030811", descrShort: "Tarzan was born into wealth but raised into incredible misfortune. Shiprweck, parents mauled by a jaguar. Luckily, a troop of gorillas took him in, but the Big Daddy gorilla never took a liking to him. That is, until the end when it's too late. Why is it too late? Watch and find out." },
             { id: 1, isRented: false, title: "The Lion King", img: "https://img00.deviantart.net/b782/i/2006/207/e/7/the_lion_king_front_cd_cover_by_peachpocket285.jpg", year: 1994, descrShort: "A young lion prince named Simba is born into wealth but raised into incredible misfortune. Trickster uncle, dying father, usurpation. Luckily, an unlikely meerkat-warthog pair take him in and teach him The Ways of the Bum Life. Be prepared for ghostly hallucinations, wild baboons, creepy crawlies." },
@@ -95,7 +99,9 @@ class App extends Component{
 
   handleNewUsersData = () => {
     let movies = this.state.movies
-    let budget = 10
+    let user = this.state.users.filter(u => u.name === this.state.userName)[0]
+    let budget = user.budget
+    // let budget = 10
     let userInfo= {
       rentedMovies : [],
       budget : budget
@@ -115,7 +121,7 @@ class App extends Component{
     if (user && user.rentedMovies.length > 0){ //for old user
       this.handleOldUsersData(user)
     }
-    else if (localStorage.currentUserName !== ("unedfined" || undefined)){ //for new user
+    else if ((localStorage.currentUserName !== ("undefined" || undefined) )){ //for new user
       this.handleNewUsersData()
       
     }
@@ -138,6 +144,7 @@ class App extends Component{
 
   render(){
     let movies = this.state.movies
+    let userInfo = this.state.users.filter( u => u.name === this.state.userName)[0]
     return(
       <Router>
 
@@ -146,7 +153,14 @@ class App extends Component{
             <Link to="/" className="header-link">Home</Link>
             <Link to="/Catalog" className="header-link"> Catalog </Link>
           </div>
-
+          
+          {userInfo !== undefined ?
+            <Link to="/" id="user-icon-link">
+              <div id="user-icon" style={{backgroundImage: `url(${userInfo.img})` }}></div>
+            </Link> 
+            : null }
+            
+          
           <div id="logo">REFLIX</div>
         </div>
 
@@ -154,6 +168,8 @@ class App extends Component{
 
         <Route exact path="/" render={ () =>
           <Landing 
+            users={this.state.users}
+            userName={this.state.userName}
             handleRegisteredUser={this.handleRegisteredUser}
             signOut={this.signOut}/> } />
 

@@ -35,6 +35,18 @@
   text-decoration: none;
 }
 
+#user-icon{
+  background-size: cover;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+}
+
+#user-icon-link{
+  position: absolute;
+  padding-top: 10px;
+}
+
 #logo{
   /* display: inline-block; */
   float: right;
